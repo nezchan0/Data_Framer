@@ -46,7 +46,7 @@ Simple and modular C programs that implement each framing method step by step �
 
 ## 💻 CLI Program Highlights
 
-Each framing method also has a **C implementation** located in the `cli/` folder.  
+Each framing method also has a **C implementation** located in the `FramingMethods/` folder.  
 These programs read input data from the user and output the framed data on the terminal.
 
 
@@ -60,13 +60,13 @@ gcc fixed_size_framing.c -o fixed
 
 #### Byte Stuffing
 ```bash
-gcc byte_stuffing.c -o byte
+gcc variable_size_byte_stuffing.c -o byte
 ./byte
 ```
 
 #### Bit Stuffing
 ```bash
-gcc bit_stuffing.c -o bit
+gcc variable_size_bit_stuffing.c -o bit
 ./bit
 ```
 
@@ -135,4 +135,5 @@ Enter bit sequence: 011111011111110
 ## 🧑‍💻 Author
 
 Alok Kumar Maurya – Developer | Email: [alok05.maurya@gmail.com](alok05.maurya@gmail.com)
+
 ---
