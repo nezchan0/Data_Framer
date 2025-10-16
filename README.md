@@ -40,7 +40,7 @@ Simple and modular C programs that implement each framing method step by step �
 - Built-in **Info Page** explaining concepts  
 - **Comparison table** between methods  
 - Fully responsive for mobile and desktop  
-- No dependencies — just open `index.html` or Live Link -> ([https://nezchan0.github.io/Framing_Methods/](https://nezchan0.github.io/Data_Framer/))
+- No dependencies — just open `index.html` or Live Link -> ([https://nezchan0.github.io/Data_Framer/](https://nezchan0.github.io/Data_Framer/))
 
 ---
 
