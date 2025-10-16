@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Framing Visualizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        }
+
+        /* Navigation */
+        nav {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        .dark-toggle {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.7rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        /* Sections */
+        .section {
+            display: none;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Home Section */
+        .home-content {
+            text-align: center;
+            color: white;
+            padding: 4rem 2rem;
+        }
+
+        .home-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: slideDown 0.8s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .home-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .start-btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 1rem 3rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Card Container */
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .dark-mode .card {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+        }
+
+        .dark-mode .card h2 {
+            color: #a8b3ff;
+        }
+
+        /* Input Panel */
+        .input-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .dark-mode .input-group label {
+            color: #ddd;
+        }
+
+        .input-group input {
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: border 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .visualize-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .visualize-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Visualization Area */
+        .viz-area {
+            min-height: 200px;
+            background: rgba(240, 242, 255, 0.5);
+            border-radius: 15px;
+            padding: 2rem;
+            margin: 2rem 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dark-mode .viz-area {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .frame {
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            animation: slideIn 0.5s ease;
+            display: inline-block;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .frame.data {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .frame.flag {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+        }
+
+        .frame.esc {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+        }
+
+        .frame.inserted {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            color: #333;
+        }
+
+        .frame.padded {
+            background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);
+            color: #333;
+        }
+
+        /* Result Panel */
+        .result-panel {
+            background: rgba(240, 242, 255, 0.5);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .dark-mode .result-panel {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .result-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .dark-mode .result-item {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .result-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .dark-mode .result-item strong {
+            color: #a8b3ff;
+        }
+
+        /* Info Section */
+        .info-content {
+            color: white;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.95);
+            color: #333;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark-mode .info-card {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .dark-mode .info-card h3 {
+            color: #a8b3ff;
+        }
+
+        .legend {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-box {
+            width: 30px;
+            height: 30px;
+            border-radius: 5px;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-table th {
+            background: rgba(102, 126, 234, 0.2);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .home-content h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                gap: 0.5rem;
+            }
+            
+            .nav-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-logo">📡 DataFramer</div>
+        <div class="nav-links">
+            <button class="nav-btn active" onclick="showSection('home')">Home</button>
+            <button class="nav-btn" onclick="showSection('fixed')">Fixed-Size</button>
+            <button class="nav-btn" onclick="showSection('byte')">Byte Stuffing</button>
+            <button class="nav-btn" onclick="showSection('bit')">Bit Stuffing</button>
+            <button class="nav-btn" onclick="showSection('info')">Info</button>
+        </div>
+        <button class="dark-toggle" onclick="toggleDarkMode()">🌙</button>
+    </nav>
+
+    <!-- Home Section -->
+    <div id="home" class="section active">
+        <div class="home-content">
+            <h1>🌐 Data Framing Visualizer</h1>
+            <p>An interactive demonstration of how data is divided and transmitted across networks using different framing techniques.</p>
+            <button class="start-btn" onclick="showSection('fixed')">Start Exploring →</button>
+        </div>
+    </div>
+
+    <!-- Fixed-Size Framing Section -->
+    <div id="fixed" class="section">
+        <div class="card">
+            <h2>Fixed-Size Framing</h2>
+            <div class="input-panel">
+                <div class="input-group">
+                    <label>Enter Data:</label>
+                    <input type="text" id="fixedData" placeholder="e.g., HELLOWORLD" value="HELLOWORLD">
+                </div>
+                <div class="input-group">
+                    <label>Frame Size:</label>
+                    <input type="number" id="frameSize" placeholder="e.g., 3" value="3" min="1">
+                </div>
+                <button class="visualize-btn" onclick="visualizeFixed()">Visualize Frames</button>
+            </div>
+            <div id="fixedViz" class="viz-area"></div>
+            <div id="fixedResult" class="result-panel" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Byte Stuffing Section -->
+    <div id="byte" class="section">
+        <div class="card">
+            <h2>Byte Stuffing</h2>
+            <div class="input-panel">
+                <div class="input-group">
+                    <label>Enter Data:</label>
+                    <input type="text" id="byteData" placeholder="e.g., AFEBFCD" value="AFEBFCD">
+                </div>
+                <div class="input-group">
+                    <label>FLAG Character:</label>
+                    <input type="text" id="flagChar" placeholder="e.g., F" value="F" maxlength="1">
+                </div>
+                <div class="input-group">
+                    <label>ESC Character:</label>
+                    <input type="text" id="escChar" placeholder="e.g., E" value="E" maxlength="1">
+                </div>
+                <button class="visualize-btn" onclick="visualizeByte()">Visualize Stuffing</button>
+            </div>
+            <div id="byteViz" class="viz-area"></div>
+            <div id="byteResult" class="result-panel" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Bit Stuffing Section -->
+    <div id="bit" class="section">
+        <div class="card">
+            <h2>Bit Stuffing</h2>
+            <div class="input-panel">
+                <div class="input-group">
+                    <label>Enter Binary Data (0s and 1s only):</label>
+                    <input type="text" id="bitData" placeholder="e.g., 011111011111110" value="011111011111110">
+                </div>
+                <button class="visualize-btn" onclick="visualizeBit()">Visualize Stuffing</button>
+            </div>
+            <div id="bitViz" class="viz-area"></div>
+            <div id="bitResult" class="result-panel" style="display:none;"></div>
+        </div>
+    </div>
+
+    <!-- Info Section -->
+    <div id="info" class="section">
+        <div class="info-content">
+            <div class="info-card">
+                <h3>📚 What is Framing?</h3>
+                <p>Framing is the process of dividing a stream of data into manageable units called frames. It allows the receiver to identify where each frame begins and ends, ensuring accurate data transmission across networks.</p>
+                <p style="margin-top: 1rem;"><strong>Why do we need it?</strong> Without framing, data would be a continuous stream of bits with no clear boundaries, making it impossible to detect errors or retransmit lost data.</p>
+            </div>
+
+            <div class="info-card">
+                <h3>📦 Fixed-Size Framing</h3>
+                <p>Data is divided into frames of equal size. If the last frame is smaller than the fixed size, it is padded with extra bits or bytes.</p>
+                <p style="margin-top: 1rem;"><strong>Example:</strong> If frame size is 3 and data is "HELLOWORLD", frames would be: HEL | LOW | ORL | D (padded)</p>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                        <span>Normal Frame</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%);"></div>
+                        <span>Padded Frame</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>🔤 Byte Stuffing</h3>
+                <p>Used when frames are variable-sized. Special FLAG characters mark the beginning and end of frames. If FLAG or ESC characters appear in the data, an ESC character is inserted before them.</p>
+                <p style="margin-top: 1rem;"><strong>Example:</strong> If FLAG=F, ESC=E, and data is "AFEBFCD", stuffed data becomes: F | A | EF | EE | B | EF | C | D | F</p>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);"></div>
+                        <span>FLAG</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);"></div>
+                        <span>ESC</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                        <span>Data</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>💾 Bit Stuffing</h3>
+                <p>Used in bit-oriented protocols. A special bit pattern (usually 01111110) marks frame boundaries. If five consecutive 1s appear in data, a 0 is automatically inserted after them.</p>
+                <p style="margin-top: 1rem;"><strong>Example:</strong> If data is "011111011", after stuffing: "0111110011" (a 0 is inserted after five 1s)</p>
+                <div class="legend">
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                        <span>Original Bits</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);"></div>
+                        <span>Inserted 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>📊 Comparison Table</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>Method</th>
+                        <th>Frame Size</th>
+                        <th>Overhead</th>
+                        <th>Best For</th>
+                    </tr>
+                    <tr>
+                        <td>Fixed-Size</td>
+                        <td>Fixed</td>
+                        <td>Low (padding only)</td>
+                        <td>Consistent data streams</td>
+                    </tr>
+                    <tr>
+                        <td>Byte Stuffing</td>
+                        <td>Variable</td>
+                        <td>Medium (ESC characters)</td>
+                        <td>Character-oriented protocols</td>
+                    </tr>
+                    <tr>
+                        <td>Bit Stuffing</td>
+                        <td>Variable</td>
+                        <td>Low (few inserted bits)</td>
+                        <td>Bit-oriented protocols</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        Made with ❤️ for educational visualization of Data Link Layer concepts
+    </footer>
+
+    <script>
+        // Navigation
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            const buttons = document.querySelectorAll('.nav-btn');
+            
+            sections.forEach(section => section.classList.remove('active'));
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const toggle = document.querySelector('.dark-toggle');
+            toggle.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // Fixed-Size Framing
+        function visualizeFixed() {
+            const data = document.getElementById('fixedData').value;
+            const size = parseInt(document.getElementById('frameSize').value);
+            
+            if (!data || !size || size < 1) {
+                alert('Please enter valid data and frame size');
+                return;
+            }
+
+            const vizArea = document.getElementById('fixedViz');
+            const resultPanel = document.getElementById('fixedResult');
+            
+            vizArea.innerHTML = '';
+            let frames = [];
+
+            // Split data into frames
+            for (let i = 0; i < data.length; i += size) {
+                let frame = data.substring(i, i + size);
+                const isPadded = frame.length < size;
+                
+                if (isPadded) {
+                    frame = frame + '█'.repeat(size - frame.length);
+                }
+                
+                frames.push(frame);
+                
+                setTimeout(() => {
+                    const frameDiv = document.createElement('div');
+                    frameDiv.className = `frame ${isPadded ? 'padded' : 'data'}`;
+                    frameDiv.textContent = frame;
+                    vizArea.appendChild(frameDiv);
+                }, i / size * 200);
+            }
+
+            // Show results
+            setTimeout(() => {
+                resultPanel.style.display = 'block';
+                resultPanel.innerHTML = `
+                    <div class="result-item">
+                        <strong>Original Data:</strong>
+                        ${data}
+                    </div>
+                    <div class="result-item">
+                        <strong>Number of Frames:</strong>
+                        ${frames.length}
+                    </div>
+                    <div class="result-item">
+                        <strong>Frames:</strong>
+                        ${frames.join(' | ')}
+                    </div>
+                `;
+            }, frames.length * 200);
+        }
+
+        // Byte Stuffing
+        function visualizeByte() {
+            const data = document.getElementById('byteData').value;
+            const flag = document.getElementById('flagChar').value;
+            const esc = document.getElementById('escChar').value;
+            
+            if (!data || !flag || !esc) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const vizArea = document.getElementById('byteViz');
+            const resultPanel = document.getElementById('byteResult');
+            
+            vizArea.innerHTML = '';
+            
+            // Byte stuffing logic
+            let stuffed = flag;
+            for (let char of data) {
+                if (char === flag || char === esc) {
+                    stuffed += esc + char;
+                } else {
+                    stuffed += char;
+                }
+            }
+            stuffed += flag;
+
+            // Visualize
+            let delay = 0;
+            for (let i = 0; i < stuffed.length; i++) {
+                setTimeout(() => {
+                    const char = stuffed[i];
+                    const frameDiv = document.createElement('div');
+                    
+                    if (char === flag) {
+                        frameDiv.className = 'frame flag';
+                        frameDiv.textContent = char + ' (FLAG)';
+                    } else if (char === esc) {
+                        frameDiv.className = 'frame esc';
+                        frameDiv.textContent = char + ' (ESC)';
+                    } else {
+                        frameDiv.className = 'frame data';
+                        frameDiv.textContent = char;
+                    }
+                    
+                    vizArea.appendChild(frameDiv);
+                }, delay);
+                delay += 150;
+            }
+
+            // De-stuffing
+            let destuffed = '';
+            let i = 1; // Skip first FLAG
+            while (i < stuffed.length - 1) { // Skip last FLAG
+                if (stuffed[i] === esc) {
+                    i++; // Skip ESC
+                    destuffed += stuffed[i];
+                } else {
+                    destuffed += stuffed[i];
+                }
+                i++;
+            }
+
+            // Show results
+            setTimeout(() => {
+                resultPanel.style.display = 'block';
+                resultPanel.innerHTML = `
+                    <div class="result-item">
+                        <strong>Original Data:</strong>
+                        ${data}
+                    </div>
+                    <div class="result-item">
+                        <strong>Stuffed Data (Transmitted):</strong>
+                        ${stuffed}
+                    </div>
+                    <div class="result-item">
+                        <strong>De-stuffed Data (Received):</strong>
+                        ${destuffed}
+                    </div>
+                    <div class="result-item">
+                        <strong>Verification:</strong>
+                        ${data === destuffed ? '✅ Data transmitted successfully!' : '❌ Error in transmission'}
+                    </div>
+                `;
+            }, delay);
+        }
+
+        // Bit Stuffing
+        function visualizeBit() {
+            const data = document.getElementById('bitData').value;
+            
+            if (!data || !/^[01]+$/.test(data)) {
+                alert('Please enter valid binary data (only 0s and 1s)');
+                return;
+            }
+
+            const vizArea = document.getElementById('bitViz');
+            const resultPanel = document.getElementById('bitResult');
+            
+            vizArea.innerHTML = '';
+            
+            // Bit stuffing logic
+            let stuffed = '';
+            let count = 0;
+            let insertedPositions = [];
+            
+            for (let i = 0; i < data.length; i++) {
+                stuffed += data[i];
+                
+                if (data[i] === '1') {
+                    count++;
+                    if (count === 5) {
+                        stuffed += '0';
+                        insertedPositions.push(stuffed.length - 1);
+                        count = 0;
+                    }
+                } else {
+                    count = 0;
+                }
+            }
+
+            // Visualize
+            let delay = 0;
+            for (let i = 0; i < stuffed.length; i++) {
+                setTimeout(() => {
+                    const frameDiv = document.createElement('div');
+                    const isInserted = insertedPositions.includes(i);
+                    
+                    frameDiv.className = `frame ${isInserted ? 'inserted' : 'data'}`;
+                    frameDiv.textContent = stuffed[i] + (isInserted ? ' (inserted)' : '');
+                    
+                    vizArea.appendChild(frameDiv);
+                }, delay);
+                delay += 100;
+            }
+
+            // De-stuffing
+            let destuffed = '';
+            count = 0;
+            for (let i = 0; i < stuffed.length; i++) {
+                if (stuffed[i] === '1') {
+                    destuffed += stuffed[i];
+                    count++;
+                    if (count === 5 && i + 1 < stuffed.length && stuffed[i + 1] === '0') {
+                        i++; // Skip inserted 0
+                        count = 0;
+                    }
+                } else {
+                    destuffed += stuffed[i];
+                    count = 0;
+                }
+            }
+
+            // Show results
+            setTimeout(() => {
+                resultPanel.style.display = 'block';
+                resultPanel.innerHTML = `
+                    <div class="result-item">
+                        <strong>Original Data:</strong>
+                        ${data}
+                    </div>
+                    <div class="result-item">
+                        <strong>Stuffed Data (Transmitted):</strong>
+                        ${stuffed}
+                    </div>
+                    <div class="result-item">
+                        <strong>Bits Inserted:</strong>
+                        ${insertedPositions.length}
+                    </div>
+                    <div class="result-item">
+                        <strong>De-stuffed Data (Received):</strong>
+                        ${destuffed}
+                    </div>
+                    <div class="result-item">
+                        <strong>Verification:</strong>
+                        ${data === destuffed ? '✅ Data transmitted successfully!' : '❌ Error in transmission'}
+                    </div>
+                `;
+            }, delay);
+        }
+    </script>
+</body>
+</html>
